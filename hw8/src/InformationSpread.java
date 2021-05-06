@@ -26,7 +26,7 @@ public class InformationSpread implements IInformationSpread {
                 String[] words = line.split(" ");
                 int v1 = Integer.parseInt(words[0]);
                 int v2 = Integer.parseInt(words[1]);
-                int w = Integer.parseInt(words[2]);
+                double w = Double.parseDouble(words[2]);
                 if (v1 == 0 || v2 == 0) {
                     line = r.readLine();
                     continue;
