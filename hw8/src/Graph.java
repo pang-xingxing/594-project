@@ -50,7 +50,7 @@ public interface Graph {
      * @param w   - the to node
      * @param wgt - the weight of the edge
      */
-    void addEdge(int v, int w, int wgt);
+    void addEdge(int v, int w, double wgt);
 
 
     /**
@@ -60,7 +60,7 @@ public interface Graph {
      * @param w - the to node
      * @return the weight of the (v,w) edge
      */
-    int weight(int v, int w);
+    double weight(int v, int w);
 
 
     /**

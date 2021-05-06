@@ -6,12 +6,13 @@
 public class GraphL implements Graph {
 
     private class Edge { // Doubly linked list node
-        int  vertex, weight;
+        int  vertex;
+        double weight;
         Edge prev;
         Edge next;
 
 
-        Edge(int v, int w, Edge p, Edge n) {
+        Edge(int v, double w, Edge p, Edge n) {
             vertex = v;
             weight = w;
             prev = p;
@@ -81,7 +82,7 @@ public class GraphL implements Graph {
 
 
     // Adds a new edge from node v to node w with weight wgt
-    public void addEdge(int v, int w, int wgt) {
+    public void addEdge(int v, int w, double wgt) {
         if (wgt == 0) {
             return; // Can't store weight of 0
         }
@@ -99,7 +100,7 @@ public class GraphL implements Graph {
 
 
     // Get the weight value for an edge
-    public int weight(int v, int w) {
+    public double weight(int v, int w) {
         Edge curr = find(v, w);
         if ((curr.next == null) || (curr.next.vertex != w)) {
             return 0;
