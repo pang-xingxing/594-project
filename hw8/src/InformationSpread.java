@@ -408,6 +408,7 @@ public class InformationSpread implements IInformationSpread {
         Collection<Integer> path = inf.longestTransmissionPath(1, 5);
         System.out.println(path);
 
+        
     }
 
 }
