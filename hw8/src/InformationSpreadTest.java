@@ -65,12 +65,23 @@ public class InformationSpreadTest {
 
     @Test
     public void testTranfectionRate() {
-        fail("Not yet implemented");
+    	inf.loadGraphFromDataSet(root + "test.mtx");
+    	assertEquals(0.8, inf.tranfectionRate(1, 0.15), 0.01);
+    	inf.loadGraphFromDataSet(root + "test.mtx");
+    	assertEquals(0.6, inf.tranfectionRate(1, 0.16), 0.01);
+    	inf.loadGraphFromDataSet(root + "test.mtx");
+    	assertEquals(0.4, inf.tranfectionRate(1, 0.21), 0.01);
+    	inf.loadGraphFromDataSet(root + "test.mtx");
+    	assertEquals(1, inf.tranfectionRate(1, 0.1), 0.01);
     }
 
     @Test
     public void testDegree() {
-        fail("Not yet implemented");
+    	inf.loadGraphFromDataSet(root + "test.mtx");
+    	assertEquals(3, inf.degree(1));
+    	assertEquals(-1, inf.degree(6));
+    	assertEquals(3, inf.degree(5));
+    	assertEquals(2, inf.degree(2));
     }
 
     @Test

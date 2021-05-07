@@ -33,11 +33,11 @@ public interface IInformationSpread {
     int[] getNeighbors(int id);
 
     /**
-     * The path of transmission with lowest probability
+     * The path of transmission with highest probability
      * @param source      - an infected node that could spread the disease
      * @param destination - the id of the destination node
      * @return the path to spread disease from source to destination
-     *         with the smallest transmission probability
+     *         with the highest transmission probability
      */
     Collection<Integer> longestTransmissionPath(int source, int destination);
 
@@ -50,9 +50,7 @@ public interface IInformationSpread {
 
 
     /**
-     * Suppose a node will be infected if the probability for it to catch the disease exceeds the threshold
-     * even when the node is under the best protection it could have, by the best protection we meant the node
-     * will only take the path of transmission with lowest probability
+     * Suppose a node will be infected if the highest probability for it to catch the disease exceeds the threshold
      * @param source - an infected node that will spread the disease
      * @return the percentage of the nodes that will eventually catch the disease.
      */

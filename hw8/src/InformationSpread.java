@@ -54,6 +54,14 @@ public class InformationSpread implements IInformationSpread {
         storepath(p, pred, pred[destination]);
         p.add(destination);
     }
+    
+    /**
+     * The path of transmission with highest probability
+     * @param source      - an infected node that could spread the disease
+     * @param destination - the id of the destination node
+     * @return the path to spread disease from source to destination
+     *         with the highest transmission probability
+     */
 
     @Override
     public Collection<Integer> longestTransmissionPath(int source, int destination) {
@@ -71,7 +79,7 @@ public class InformationSpread implements IInformationSpread {
         pq.add(source);
         while (!pq.isEmpty()) {
             int node = pq.poll();
-            System.out.println(node + ": " + graph.getValue(node)); //for test
+            //System.out.println(node + ": " + graph.getValue(node)); //for test
             if (node == destination) {
                 storepath(p, pred, destination);
                 break;
@@ -88,28 +96,85 @@ public class InformationSpread implements IInformationSpread {
         }
         return p;
     }
+    
+    /**
+     * @param probability  - the probability of a node to catch the disease from its neighbor
+     * @param threshold
+     * @return the true if probability >= threshold.
+     */
 
     @Override
     public boolean willCatchtheDisease(double probability, double threshold) {
         // TODO Auto-generated method stub
         return false;
     }
-
+    
+    /**
+     * Suppose a node will be infected if the highest probability for it to catch the disease exceeds the threshold
+     * @param source - an infected node that will spread the disease
+     * @return the percentage of the nodes that will eventually catch the disease.
+     */
+    
     @Override
     public double tranfectionRate(int source, double threshold) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+    	double count = 0;
+        for (int i = 1; i < graph.nodeCount(); i++) {
+            graph.setValue(i, Double.POSITIVE_INFINITY);
+        }
+        int[] pred = new int[graph.nodeCount()];
+        Arrays.fill(pred, 0);
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        graph.setValue(source, 0);
+        pq.add(source);
+        while (!pq.isEmpty()) {
+            int node = pq.poll();
+            for (int neighbor : this.getNeighbors(node)) {
+                
+                double temp = graph.getValue(node) + graph.weight(node, neighbor);
+                if (temp < graph.getValue(neighbor)) {
+                    graph.setValue(neighbor, temp);
+                    pq.add(neighbor);
+                    pred[neighbor] = node;
+                }
+            }
+        }
+        
+        for (int i = 1; i < graph.nodeCount(); i++) {
+            if (Math.exp(-1 * graph.getValue(i)) >= threshold) {
+            
+            	count++;
+            }
+        }
+        
+        
+        return count / (graph.nodeCount() - 1);
+        
+     }
+    
+    
+    /**
+     * @param n the node
+     * @return the degree of the node
+     */
 
     @Override
     public int degree(int n) {
-        // TODO Auto-generated method stub
-        return 0;
+    	if (n <= 0 || n > graph.nodeCount() - 1) {
+            return -1;
+        }
+        return graph.neighbors(n).length;
     }
+    
+    /**
+     * Remove the nodes with the given degree
+     * @param d         - the degree of the nodes to be removed
+     * @return the removed nodes
+     */
 
     @Override
     public Collection<Integer> removeNodesDegree(int d) {
-        // TODO Auto-generated method stub
+    	
+        // TODO Auto-generated method stu
         return null;
     }
 
