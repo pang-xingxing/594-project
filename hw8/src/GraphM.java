@@ -5,7 +5,7 @@
  */
 public class GraphM implements Graph {
     private double[][]  matrix;
-    private Object[] nodeValues;
+    private double[] nodeValues;
     private int      numEdge;
 
 
@@ -21,7 +21,7 @@ public class GraphM implements Graph {
     // Initialize the graph with n vertices
     public void init(int n) {
         matrix = new double[n][n];
-        nodeValues = new Object[n];
+        nodeValues = new double[n];
         numEdge = 0;
     }
 
@@ -39,13 +39,13 @@ public class GraphM implements Graph {
 
 
     // Get the value of node with index v
-    public Object getValue(int v) {
+    public double getValue(int v) {
         return nodeValues[v];
     }
 
 
     // Set the value of node with index v
-    public void setValue(int v, Object val) {
+    public void setValue(int v, double val) {
         nodeValues[v] = val;
     }
 

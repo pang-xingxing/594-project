@@ -31,7 +31,7 @@ public interface Graph {
      * @return the value of node
      */
 
-    Object getValue(int v);
+    double getValue(int v);
 
 
     /**
@@ -40,7 +40,7 @@ public interface Graph {
      * @param v   the index of the node
      * @param val the value of the node
      */
-    void setValue(int v, Object val);
+    void setValue(int v, double val);
 
 
     /**

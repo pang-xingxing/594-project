@@ -39,7 +39,7 @@ public interface IInformationSpread {
      * @return the path to spread disease from source to destination
      *         with the smallest transmission probability
      */
-    Collection<Integer> lowestTransmissionPath(int source, int destination);
+    Collection<Integer> longestTransmissionPath(int source, int destination);
 
     /**
      * @param probability  - the probability of a node to catch the disease from its neighbor

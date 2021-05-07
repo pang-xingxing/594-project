@@ -21,7 +21,7 @@ public class GraphL implements Graph {
     }
 
     private Edge[]   nodeArray;
-    private Object[] nodeValues;
+    private double[] nodeValues;
     private int      numEdge;
 
 
@@ -41,7 +41,7 @@ public class GraphL implements Graph {
         for (int i = 0; i < n; i++) {
             nodeArray[i] = new Edge(-1, -1, null, null);
         }
-        nodeValues = new Object[n];
+        nodeValues = new double[n];
         numEdge = 0;
     }
 
@@ -59,13 +59,13 @@ public class GraphL implements Graph {
 
 
     // Get the value of node with index v
-    public Object getValue(int v) {
+    public double getValue(int v) {
         return nodeValues[v];
     }
 
 
     // Set the value of node with index v
-    public void setValue(int v, Object val) {
+    public void setValue(int v, double val) {
         nodeValues[v] = val;
     }
 
