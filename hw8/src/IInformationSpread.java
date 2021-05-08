@@ -54,7 +54,7 @@ public interface IInformationSpread {
      * @param source - an infected node that will spread the disease
      * @return the percentage of the nodes that will eventually catch the disease.
      */
-    double tranfectionRate(int source, double threshold);
+    double transfectionRate(int source, double threshold);
 
     // -- Degree
     /**
@@ -80,7 +80,7 @@ public interface IInformationSpread {
      * @return the percentage of the nodes that will eventually catch the disease after we remove the vertices with
      * degree d.
      */
-    double tranfectionRateDegree(int source, double threshold, int d);
+    double transfectionRateDegree(int source, double threshold, int d);
 
 
 
@@ -122,7 +122,7 @@ public interface IInformationSpread {
      * @return the percentage of the nodes that will eventually catch the disease after we remove the vertices with
      * cc in between low and high.
      */
-    double tranfectionRateCC(int source, double threshold, double low, double high);
+    double transfectionRateCC(int source, double threshold, double low, double high);
 
     /**
      * Suppose a node will be infected if the probability for it to catch the disease exceeds the threshold
@@ -134,7 +134,7 @@ public interface IInformationSpread {
      * @return the percentage of the nodes that will eventually catch the disease after we vaccinate some population.
      * Those people will stop the spread of disease starting from them.
      */
-    double tranfectionRateVaccine(int source, double threshold, Collection<Integer> vaccinated);
+    double transfectionRateVaccine(int source, double threshold, Collection<Integer> vaccinated);
 
 
 

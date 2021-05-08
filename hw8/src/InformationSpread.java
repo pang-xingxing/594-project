@@ -8,9 +8,17 @@ public class InformationSpread implements IInformationSpread {
     private Graph graph;
 
     public InformationSpread() {
-        graph = new GraphL(); // could change to matrix
+        graph = new GraphL(); 
     }
 
+    /**
+     * Create a graph representation of the dataset. The first line of the file
+     * contains the number of nodes add 1 to the number of nodes in the graph
+     * since there is no node with id 0
+     * 
+     * @param filePath the path of the data
+     * @return the number of entries (nodes) in the dataset (graph)
+     */
     @Override
     public int loadGraphFromDataSet(String filePath) {
         try {
@@ -39,11 +47,23 @@ public class InformationSpread implements IInformationSpread {
         return graph.nodeCount() - 1;
     }
 
+    /**
+     * Return the neighbors ids of a specific node
+     * 
+     * @param id the id of the page
+     * @return the array of neighbor(s)
+     */
     @Override
     public int[] getNeighbors(int id) {
         return graph.neighbors(id);
     }
 
+    /**
+     * Store path from source to destination
+     * @param p
+     * @param pred
+     * @param destination
+     */
     private void storepath(Collection<Integer> p, int[] pred, int destination) {
         if (destination == 0) {
             return;
@@ -51,15 +71,15 @@ public class InformationSpread implements IInformationSpread {
         storepath(p, pred, pred[destination]);
         p.add(destination);
     }
-    
+
     /**
      * The path of transmission with highest probability
+     * 
      * @param source      - an infected node that could spread the disease
      * @param destination - the id of the destination node
-     * @return the path to spread disease from source to destination
-     *         with the highest transmission probability
+     * @return the path to spread disease from source to destination with the
+     *         highest transmission probability
      */
-
     @Override
     public Collection<Integer> longestTransmissionPath(int source, int destination) {
         Collection<Integer> p = new ArrayList<>();
@@ -76,13 +96,12 @@ public class InformationSpread implements IInformationSpread {
         pq.add(source);
         while (!pq.isEmpty()) {
             int node = pq.poll();
-            //System.out.println(node + ": " + graph.getValue(node)); //for test
+            // System.out.println(node + ": " + graph.getValue(node)); //for test
             if (node == destination) {
                 storepath(p, pred, destination);
                 break;
             }
-            for (int neighbor : this.getNeighbors(node)) {
-                
+            for (int neighbor: this.getNeighbors(node)) {
                 double temp = graph.getValue(node) + graph.weight(node, neighbor);
                 if (temp < graph.getValue(neighbor)) {
                     graph.setValue(neighbor, temp);
@@ -93,8 +112,6 @@ public class InformationSpread implements IInformationSpread {
         }
         return p;
     }
-
-
 
     public int findMaxVertex(boolean[] visited, double[] weight) {
         int index = -1;
@@ -110,8 +127,9 @@ public class InformationSpread implements IInformationSpread {
 
     /**
      * The path of transmission with highest probability
-     * @return the max spanning tree of this graph, representing the path
-     *  that spans the entire graph with the highest transmission probability
+     * 
+     * @return the max spanning tree of this graph, representing the path that spans
+     *         the entire graph with the highest transmission probability
      */
     public int[] maxSpanningTreePrim() {
         int n = this.graph.nodeCount();
@@ -126,9 +144,11 @@ public class InformationSpread implements IInformationSpread {
         parent[1] = 1;
         for (int i = 0; i < n; i++) {
             int maxVertex = findMaxVertex(visited, currWeight);
-            if (maxVertex < 0) break;
+            if (maxVertex < 0) {
+                break;
+            }
             visited[maxVertex] = true;
-            for (int neighbor: this.graph.neighbors(maxVertex)) {
+            for (int neighbor : this.graph.neighbors(maxVertex)) {
                 if (!visited[neighbor]) {
                     double weight = Math.exp(-1 * this.graph.weight(maxVertex, neighbor));
                     if (weight > currWeight[neighbor]) {
@@ -141,26 +161,32 @@ public class InformationSpread implements IInformationSpread {
         return parent;
     }
     
+//    public int[] maxSpanningTreeKruskal() {
+//        
+//    }
+
     /**
-     * @param probability  - the probability of a node to catch the disease from its neighbor
+     * @param probability - the probability of a node to catch the disease from its
+     *                    neighbor
      * @param threshold
      * @return the true if probability >= threshold (precision = 0.01).
      */
-
     @Override
     public boolean willCatchtheDisease(double probability, double threshold) {
         return probability * 100 >= threshold * 100;
     }
-    
+
     /**
-     * Suppose a node will be infected if the highest probability for it to catch the disease exceeds the threshold
+     * Suppose a node will be infected if the highest probability for it to catch
+     * the disease exceeds the threshold
+     * 
      * @param source - an infected node that will spread the disease
      * @return the percentage of the nodes that will eventually catch the disease.
      */
-    
+
     @Override
     public double transfectionRate(int source, double threshold) {
-    	double count = 0;
+        double count = 0;
         for (int i = 1; i < graph.nodeCount(); i++) {
             graph.setValue(i, Double.POSITIVE_INFINITY);
         }
@@ -180,19 +206,17 @@ public class InformationSpread implements IInformationSpread {
                 }
             }
         }
-        
+
         for (int i = 1; i < graph.nodeCount(); i++) {
             if (willCatchtheDisease(Math.exp(-1 * graph.getValue(i)), threshold)) {
-            	count++;
+                count++;
             }
         }
-        
-        
+
         return count / (graph.nodeCount() - 1);
-        
-     }
-    
-    
+
+    }
+
     /**
      * @param n the node
      * @return the degree of the node
@@ -200,12 +224,11 @@ public class InformationSpread implements IInformationSpread {
 
     @Override
     public int degree(int n) {
-    	if (n <= 0 || n > graph.nodeCount() - 1) {
+        if (n <= 0 || n > graph.nodeCount() - 1) {
             return -1;
         }
         return graph.neighbors(n).length;
     }
-
 
     public Collection<Integer> degreeNodes(int d) {
         List<Integer> nodes = new ArrayList<>();
@@ -219,7 +242,8 @@ public class InformationSpread implements IInformationSpread {
 
     /**
      * Remove the nodes with the given degree
-     * @param d         - the degree of the nodes to be removed
+     * 
+     * @param d - the degree of the nodes to be removed
      * @return the removed nodes
      */
 
@@ -237,18 +261,17 @@ public class InformationSpread implements IInformationSpread {
         return set;
     }
 
-
-
     /**
-     * Suppose a node will be infected if the probability for it to catch the disease exceeds the threshold
-     * even when the node is under the best protection it could have, by the best protection we meant the node
-     * will only take the path of transmission with lowest probability
+     * Suppose a node will be infected if the probability for it to catch the
+     * disease exceeds the threshold even when the node is under the best protection
+     * it could have, by the best protection we meant the node will only take the
+     * path of transmission with lowest probability
      *
      * @param source    - an infected node that will spread the disease
      * @param threshold
      * @param d         - remove nodes of degree d
-     * @return the percentage of the nodes that will eventually catch the disease after we remove the vertices with
-     * degree d.
+     * @return the percentage of the nodes that will eventually catch the disease
+     *         after we remove the vertices with degree d.
      */
     @Override
     public double transfectionRateDegree(int source, double threshold, int d) {
@@ -269,7 +292,7 @@ public class InformationSpread implements IInformationSpread {
      * nodes with degree 0 or 1 have a cc of 0
      *
      * @param n the node
-     * @return the  clustering coefficient of n
+     * @return the clustering coefficient of n
      */
     @Override
     public double clustCoeff(int n) {
@@ -289,7 +312,7 @@ public class InformationSpread implements IInformationSpread {
                 }
             }
         }
-        return  (connections / 2.0) / totalConnections;
+        return (connections / 2.0) / totalConnections;
     }
 
     /**
@@ -297,8 +320,8 @@ public class InformationSpread implements IInformationSpread {
      *
      * @param low  - the lower bound (inclusive) of the cc range
      * @param high - the upper bound (inclusive) of the cc range
-     * @return a collection of nodes with a clustering coefficient
-     * within [low, high]
+     * @return a collection of nodes with a clustering coefficient within [low,
+     *         high]
      */
     @Override
     public Collection<Integer> clustCoeffNodes(double low, double high) {
@@ -308,8 +331,7 @@ public class InformationSpread implements IInformationSpread {
         }
         for (int i = 1; i < this.graph.nodeCount(); i++) {
             double cc = clustCoeff(i);
-            if ((int) (cc * 100) >= (int) (low * 100)
-                    && (int) (cc * 100) <= (int) (high * 100)) {
+            if ((int) (cc * 100) >= (int) (low * 100) && (int) (cc * 100) <= (int) (high * 100)) {
                 nodes.add(i);
             }
         }
@@ -338,21 +360,22 @@ public class InformationSpread implements IInformationSpread {
     }
 
     /**
-     * Suppose a node will be infected if the probability for it to catch the disease exceeds the threshold
-     * even when the node is under the best protection it could have, by the best protection we meant the node
-     * will only take the path of transmission with lowest probability
+     * Suppose a node will be infected if the probability for it to catch the
+     * disease exceeds the threshold even when the node is under the best protection
+     * it could have, by the best protection we meant the node will only take the
+     * path of transmission with lowest probability
      *
      * @param source    - an infected node that will spread the disease
      * @param threshold - an infected node that will spread the disease
      * @param low       - remove nodes of degree d
      * @param high      - remove nodes of degree d
-     * @return the percentage of the nodes that will eventually catch the disease after we remove the vertices with
-     * cc in between low and high.
+     * @return the percentage of the nodes that will eventually catch the disease
+     *         after we remove the vertices with cc in between low and high.
      */
     @Override
     public double transfectionRateCC(int source, double threshold, double low, double high) {
-        if (source <= 0 || source >= this.graph.nodeCount() || low < 0 || high < 0
-                || high > 1 || threshold < 0 || threshold > 1) {
+        if (source <= 0 || source >= this.graph.nodeCount() 
+                || low < 0 || high < 0 || high > 1 || threshold < 0 || threshold > 1) {
             return -1;
         }
         Set<Integer> removedNodes = (Set<Integer>) removeNodesCC(low, high);
@@ -367,7 +390,7 @@ public class InformationSpread implements IInformationSpread {
     /**
      * Remove the nodes with clustering coefficients within the given range
      *
-     * @param vaccinated  - a collection of nodes getting the vaccination
+     * @param vaccinated - a collection of nodes getting the vaccination
      */
     public void removeVaccinated(Collection<Integer> vaccinated) {
         Set<Integer> set = new HashSet<>();
@@ -381,19 +404,22 @@ public class InformationSpread implements IInformationSpread {
     }
 
     /**
-     * Suppose a node will be infected if the probability for it to catch the disease exceeds the threshold
-     * even when the node is under the best protection it could have, by the best protection we meant the node
-     * will only take the path of transmission with lowest probability
+     * Suppose a node will be infected if the probability for it to catch the
+     * disease exceeds the threshold even when the node is under the best protection
+     * it could have, by the best protection we meant the node will only take the
+     * path of transmission with lowest probability
      *
      * @param source     - an infected node that will spread the disease
      * @param threshold  - an infected node that will spread the disease
      * @param vaccinated - vaccinated population in the group
-     * @return the percentage of the nodes that will eventually catch the disease after we vaccinate some population.
-     * Those people will stop the spread of disease starting from them.
+     * @return the percentage of the nodes that will eventually catch the disease
+     *         after we vaccinate some population. Those people will stop the spread
+     *         of disease starting from them.
      */
     @Override
-    public double transfectionRateVaccine(int source, double threshold, Collection<Integer> vaccinated) {
-        if (source <= 0 || source >= this.graph.nodeCount() || vaccinated.contains(source)
+    public double transfectionRateVaccine(int source, 
+            double threshold, Collection<Integer> vaccinated) {
+        if (source <= 0 || source >= this.graph.nodeCount() || vaccinated.contains(source) 
                 || vaccinated.size() == 0 || threshold < 0 || threshold > 1) {
             return -1;
         }
@@ -401,14 +427,12 @@ public class InformationSpread implements IInformationSpread {
         return transfectionRate(source, threshold);
     }
 
-
     public static void main(String[] args) {
         IInformationSpread inf = new InformationSpread();
         inf.loadGraphFromDataSet("datasets/test.mtx");
         Collection<Integer> path = inf.longestTransmissionPath(1, 5);
         System.out.println(path);
 
-        
     }
 
 }
