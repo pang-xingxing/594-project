@@ -4,22 +4,7 @@
  *
  */
 public class GraphL implements Graph {
-
-    private class Edge { // Doubly linked list node
-        int  vertex;
-        double weight;
-        Edge prev;
-        Edge next;
-
-
-        Edge(int v, double w, Edge p, Edge n) {
-            vertex = v;
-            weight = w;
-            prev = p;
-            next = n;
-        }
-    }
-
+    
     private Edge[]   nodeArray;
     private double[] nodeValues;
     private int      numEdge;
@@ -29,7 +14,7 @@ public class GraphL implements Graph {
     /**
      * Empty no argument constructor
      */
-    GraphL() {
+    public GraphL() {
      // No real constructor needed
     }
 

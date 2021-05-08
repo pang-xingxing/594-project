@@ -126,7 +126,7 @@ public class InformationSpread implements IInformationSpread {
     }
 
     /**
-     * The path of transmission with highest probability
+     * The spanning tree of transmission with highest probability with Prim's algorithm
      * 
      * @return the max spanning tree of this graph, representing the path that spans
      *         the entire graph with the highest transmission probability
@@ -161,9 +161,73 @@ public class InformationSpread implements IInformationSpread {
         return parent;
     }
     
-//    public int[] maxSpanningTreeKruskal() {
-//        
-//    }
+    /**
+     * union find
+     * @param pred
+     * @param v
+     * @return
+     */
+    private int find(int[] pred, int v) {
+        if (pred[v] == -1) {
+            return v;
+        }
+        return find(pred, pred[v]);
+    }
+    
+    /**
+     * union find
+     * @param pred
+     * @param v
+     * @return
+     */
+    private void union(int[] pred, int u, int v) {
+        int uroot = find(pred, u);
+        int vroot = find(pred, v);
+        pred[uroot] = vroot;
+    }
+    
+    /**
+     * The spanning tree of transmission with highest probability with Kruskal algorithm
+     * 
+     * @return the max spanning tree of this graph, representing the path that spans
+     *         the entire graph with the highest transmission probability
+     */
+    public Collection<Edge> maxSpanningTreeKruskal() {
+        Collection<Edge> col = new ArrayList<>();
+        PriorityQueue<Edge> pq = new PriorityQueue<>(new Comparator<Edge>() {
+            @Override
+            public int compare(Edge e1, Edge e2) {
+                if (e1.getWeight() < e2.getWeight()) {
+                    return -1;
+                } else if (e1.getWeight() > e2.getWeight()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        int n = this.graph.nodeCount();
+        int[] pred = new int[n];
+        Arrays.fill(pred, -1);
+        for (int u = 1; u < n; u++) {
+            for (int neighbor: this.getNeighbors(u)) {
+                if (neighbor > u) {
+                    pq.add(new Edge(u, neighbor, this.graph.weight(u, neighbor)));
+                }
+            }
+        }
+        while (!pq.isEmpty()) {
+            Edge e = pq.poll();
+            int u = e.getLeft();
+            int v = e.getRight();
+            if (find(pred, u) != find(pred, v)) {
+                union(pred, u, v);
+                col.add(e);
+            }
+            
+        }
+        return col;
+    }
 
     /**
      * @param probability - the probability of a node to catch the disease from its
@@ -431,7 +495,10 @@ public class InformationSpread implements IInformationSpread {
         IInformationSpread inf = new InformationSpread();
         inf.loadGraphFromDataSet("datasets/test.mtx");
         Collection<Integer> path = inf.longestTransmissionPath(1, 5);
-        System.out.println(path);
+        Collection<Edge> pred = ((InformationSpread) inf).maxSpanningTreeKruskal();
+        for (Edge i: pred) {
+            System.out.println(i.getLeft() + " " + i.getRight());
+        }
 
     }
 

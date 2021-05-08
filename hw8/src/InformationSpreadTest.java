@@ -13,7 +13,7 @@ public class InformationSpreadTest {
     @Before
     public void setUp() throws Exception {
         inf = new InformationSpread();
-        //root = "/autograder/submission/";
+        // root = "/autograder/submission/";
         root = "datasets/";
     }
 
@@ -60,8 +60,8 @@ public class InformationSpreadTest {
     @Test
     public void testFindMaxVertex() {
         inf.loadGraphFromDataSet(root + "test.mtx");
-        boolean[] visited = new boolean[] {false, true, true, false, false, false};
-        double[] weight = new double[] {Double.MIN_VALUE, 0.7, 0.5, 0.4, 0.3, 0.2};
+        boolean[] visited = new boolean[] { false, true, true, false, false, false };
+        double[] weight = new double[] { Double.MIN_VALUE, 0.7, 0.5, 0.4, 0.3, 0.2 };
         assertEquals(3, inf.findMaxVertex(visited, weight));
 
     }
@@ -74,10 +74,20 @@ public class InformationSpreadTest {
         assertEquals(5, parent[4]);
         assertEquals(5, parent[2]);
         assertEquals(3, parent[5]);
-        
+
 //        for (int i = 1; i < parent.length; i++) {
 //            System.out.println(i + "-" + parent[i]);
 //        }
+    }
+
+    @Test
+    public void testMaxSpanningTreeKruskal() {
+        inf.loadGraphFromDataSet(root + "test.mtx");
+        Collection<Edge> col = inf.maxSpanningTreeKruskal();
+        col.contains(new Edge(3, 5));
+        col.contains(new Edge(2, 5));
+        col.contains(new Edge(4, 5));
+        col.contains(new Edge(1, 3));
     }
 
     @Test
@@ -90,23 +100,23 @@ public class InformationSpreadTest {
 
     @Test
     public void testTranfectionRate() {
-    	inf.loadGraphFromDataSet(root + "test.mtx");
-    	assertEquals(0.8, inf.transfectionRate(1, 0.15), 0.01);
-    	inf.loadGraphFromDataSet(root + "test.mtx");
-    	assertEquals(0.6, inf.transfectionRate(1, 0.16), 0.01);
-    	inf.loadGraphFromDataSet(root + "test.mtx");
-    	assertEquals(0.4, inf.transfectionRate(1, 0.21), 0.01);
-    	inf.loadGraphFromDataSet(root + "test.mtx");
-    	assertEquals(1, inf.transfectionRate(1, 0.1), 0.01);
+        inf.loadGraphFromDataSet(root + "test.mtx");
+        assertEquals(0.8, inf.transfectionRate(1, 0.15), 0.01);
+        inf.loadGraphFromDataSet(root + "test.mtx");
+        assertEquals(0.6, inf.transfectionRate(1, 0.16), 0.01);
+        inf.loadGraphFromDataSet(root + "test.mtx");
+        assertEquals(0.4, inf.transfectionRate(1, 0.21), 0.01);
+        inf.loadGraphFromDataSet(root + "test.mtx");
+        assertEquals(1, inf.transfectionRate(1, 0.1), 0.01);
     }
 
     @Test
     public void testDegree() {
-    	inf.loadGraphFromDataSet(root + "test.mtx");
-    	assertEquals(3, inf.degree(1));
-    	assertEquals(-1, inf.degree(6));
-    	assertEquals(3, inf.degree(5));
-    	assertEquals(2, inf.degree(2));
+        inf.loadGraphFromDataSet(root + "test.mtx");
+        assertEquals(3, inf.degree(1));
+        assertEquals(-1, inf.degree(6));
+        assertEquals(3, inf.degree(5));
+        assertEquals(2, inf.degree(2));
     }
 
     @Test
@@ -124,7 +134,6 @@ public class InformationSpreadTest {
         Set<Integer> set1 = (Set<Integer>) inf.removeNodesDegree(3);
         assertEquals(2, set1.size());
     }
-
 
     @Test
     public void testTranfectionRateDegree() {
