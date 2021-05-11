@@ -3,6 +3,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Expand hw7 by assigning a random probability of transmission to each edge
+ * @author Han Xiao, Zhuoyun Wang, Yuxin Kan
+ *
+ */
 public class InformationSpread implements IInformationSpread {
 
     private Graph graph;
@@ -11,6 +16,8 @@ public class InformationSpread implements IInformationSpread {
         graph = new GraphL(); 
     }
 
+    
+    // -- loading file
     /**
      * Create a graph representation of the dataset. The first line of the file
      * contains the number of nodes add 1 to the number of nodes in the graph
@@ -19,6 +26,7 @@ public class InformationSpread implements IInformationSpread {
      * @param filePath the path of the data
      * @return the number of entries (nodes) in the dataset (graph)
      */
+    @SuppressWarnings("resource")
     @Override
     public int loadGraphFromDataSet(String filePath) {
         try {
@@ -58,6 +66,8 @@ public class InformationSpread implements IInformationSpread {
         return graph.neighbors(id);
     }
 
+    
+    // -- longest possibility path of getting infected
     /**
      * Store path from source to destination
      * @param p
@@ -96,7 +106,6 @@ public class InformationSpread implements IInformationSpread {
         pq.add(source);
         while (!pq.isEmpty()) {
             int node = pq.poll();
-            // System.out.println(node + ": " + graph.getValue(node)); //for test
             if (node == destination) {
                 storepath(p, pred, destination);
                 break;
@@ -113,6 +122,14 @@ public class InformationSpread implements IInformationSpread {
         return p;
     }
 
+    
+    // -- maximum spanning tree
+    /**
+     * find the vertex with the maximum weight
+     * @param visited
+     * @param weight
+     * @return
+     */
     public int findMaxVertex(boolean[] visited, double[] weight) {
         int index = -1;
         double maxW = Double.MIN_VALUE;
@@ -131,6 +148,7 @@ public class InformationSpread implements IInformationSpread {
      * @return the max spanning tree of this graph, representing the path that spans
      *         the entire graph with the highest transmission probability
      */
+    @Override
     public int[] maxSpanningTreePrim() {
         int n = this.graph.nodeCount();
         boolean[] visited = new boolean[n];
@@ -148,7 +166,7 @@ public class InformationSpread implements IInformationSpread {
                 break;
             }
             visited[maxVertex] = true;
-            for (int neighbor : this.graph.neighbors(maxVertex)) {
+            for (int neighbor: this.graph.neighbors(maxVertex)) {
                 if (!visited[neighbor]) {
                     double weight = Math.exp(-1 * this.graph.weight(maxVertex, neighbor));
                     if (weight > currWeight[neighbor]) {
@@ -165,7 +183,7 @@ public class InformationSpread implements IInformationSpread {
      * union find
      * @param pred
      * @param v
-     * @return
+     * @return the root of this vertex
      */
     private int find(int[] pred, int v) {
         if (pred[v] == -1) {
@@ -178,7 +196,7 @@ public class InformationSpread implements IInformationSpread {
      * union find
      * @param pred
      * @param v
-     * @return
+     * @return 
      */
     private void union(int[] pred, int u, int v) {
         int uroot = find(pred, u);
@@ -192,6 +210,7 @@ public class InformationSpread implements IInformationSpread {
      * @return the max spanning tree of this graph, representing the path that spans
      *         the entire graph with the highest transmission probability
      */
+    @Override
     public Collection<Edge> maxSpanningTreeKruskal() {
         Collection<Edge> col = new ArrayList<>();
         PriorityQueue<Edge> pq = new PriorityQueue<>(new Comparator<Edge>() {
@@ -229,6 +248,8 @@ public class InformationSpread implements IInformationSpread {
         return col;
     }
 
+    
+    // -- how to measure infection rate
     /**
      * @param probability - the probability of a node to catch the disease from its
      *                    neighbor
@@ -247,7 +268,6 @@ public class InformationSpread implements IInformationSpread {
      * @param source - an infected node that will spread the disease
      * @return the percentage of the nodes that will eventually catch the disease.
      */
-
     @Override
     public double transfectionRate(int source, double threshold) {
         double count = 0;
@@ -261,7 +281,7 @@ public class InformationSpread implements IInformationSpread {
         pq.add(source);
         while (!pq.isEmpty()) {
             int node = pq.poll();
-            for (int neighbor : this.getNeighbors(node)) {
+            for (int neighbor: this.getNeighbors(node)) {
                 double temp = graph.getValue(node) + graph.weight(node, neighbor);
                 if (temp < graph.getValue(neighbor)) {
                     graph.setValue(neighbor, temp);
@@ -276,16 +296,16 @@ public class InformationSpread implements IInformationSpread {
                 count++;
             }
         }
-
         return count / (graph.nodeCount() - 1);
 
     }
 
+    
+    // -- Degree
     /**
      * @param n the node
      * @return the degree of the node
      */
-
     @Override
     public int degree(int n) {
         if (n <= 0 || n > graph.nodeCount() - 1) {
@@ -294,6 +314,11 @@ public class InformationSpread implements IInformationSpread {
         return graph.neighbors(n).length;
     }
 
+    /**
+     * @param d the degree
+     * @return all the node with degree d
+     */
+    @Override
     public Collection<Integer> degreeNodes(int d) {
         List<Integer> nodes = new ArrayList<>();
         for (int i = 1; i < this.graph.nodeCount(); i++) {
@@ -310,14 +335,13 @@ public class InformationSpread implements IInformationSpread {
      * @param d - the degree of the nodes to be removed
      * @return the removed nodes
      */
-
     @Override
     public Collection<Integer> removeNodesDegree(int d) {
         List<Integer> nodes = (List<Integer>) degreeNodes(d);
         Set<Integer> set = new HashSet<>();
         set.addAll(nodes);
-        for (int node : set) {
-            for (int neighbor : getNeighbors(node)) {
+        for (int node: set) {
+            for (int neighbor: getNeighbors(node)) {
                 this.graph.removeEdge(node, neighbor);
                 this.graph.removeEdge(neighbor, node);
             }
@@ -352,6 +376,8 @@ public class InformationSpread implements IInformationSpread {
         return transfectionRate(source, threshold);
     }
 
+    
+    // -- CLustering Coefficient
     /**
      * nodes with degree 0 or 1 have a cc of 0
      *
@@ -369,8 +395,8 @@ public class InformationSpread implements IInformationSpread {
         }
         int totalConnections = numOfNeighbor * (numOfNeighbor - 1) / 2;
         int connections = 0;
-        for (int v : this.graph.neighbors(n)) {
-            for (int w : this.graph.neighbors(n)) {
+        for (int v: this.graph.neighbors(n)) {
+            for (int w: this.graph.neighbors(n)) {
                 if (v != w && this.graph.hasEdge(v, w)) {
                     connections++;
                 }
@@ -414,8 +440,8 @@ public class InformationSpread implements IInformationSpread {
         List<Integer> nodes = (List<Integer>) clustCoeffNodes(low, high);
         Set<Integer> set = new HashSet<>();
         set.addAll(nodes);
-        for (int node : set) {
-            for (int neighbor : this.graph.neighbors(node)) {
+        for (int node: set) {
+            for (int neighbor: this.graph.neighbors(node)) {
                 this.graph.removeEdge(node, neighbor);
                 this.graph.removeEdge(neighbor, node);
             }
@@ -451,16 +477,19 @@ public class InformationSpread implements IInformationSpread {
         return transfectionRate(source, threshold);
     }
 
+    
+    // -- Vaccinate
     /**
      * Remove the nodes with clustering coefficients within the given range
      *
      * @param vaccinated - a collection of nodes getting the vaccination
      */
+    @Override
     public void removeVaccinated(Collection<Integer> vaccinated) {
         Set<Integer> set = new HashSet<>();
         set.addAll(vaccinated);
-        for (int node : set) {
-            for (int neighbor : this.graph.neighbors(node)) {
+        for (int node: set) {
+            for (int neighbor: this.graph.neighbors(node)) {
                 this.graph.removeEdge(node, neighbor);
                 this.graph.removeEdge(neighbor, node);
             }
@@ -490,16 +519,4 @@ public class InformationSpread implements IInformationSpread {
         removeVaccinated(vaccinated);
         return transfectionRate(source, threshold);
     }
-
-    public static void main(String[] args) {
-        IInformationSpread inf = new InformationSpread();
-        inf.loadGraphFromDataSet("datasets/test.mtx");
-        Collection<Integer> path = inf.longestTransmissionPath(1, 5);
-        Collection<Edge> pred = ((InformationSpread) inf).maxSpanningTreeKruskal();
-        for (Edge i: pred) {
-            System.out.println(i.getLeft() + " " + i.getRight());
-        }
-
-    }
-
 }

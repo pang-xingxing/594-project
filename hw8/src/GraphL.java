@@ -5,9 +5,9 @@
  */
 public class GraphL implements Graph {
     
-    private Edge[]   nodeArray;
+    private Edge[] nodeArray;
     private double[] nodeValues;
-    private int      numEdge;
+    private int numEdge;
 
 
     

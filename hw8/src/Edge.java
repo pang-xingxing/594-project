@@ -1,3 +1,8 @@
+/**
+ * Define an edge in adjacency list
+ * @author Han Xiao, Zhuoyun Wang, Yuxin Kan
+ *
+ */
 public class Edge { // Doubly linked list node
     int vertex;
     double weight;
@@ -35,6 +40,7 @@ public class Edge { // Doubly linked list node
         return this.weight;
     }
     
+    @Override
     public boolean equals(Object o) {
         Edge other = (Edge) o;
         if (vertex == other.getLeft() && vertex2 == other.getRight()) {

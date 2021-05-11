@@ -74,10 +74,6 @@ public class InformationSpreadTest {
         assertEquals(5, parent[4]);
         assertEquals(5, parent[2]);
         assertEquals(3, parent[5]);
-
-//        for (int i = 1; i < parent.length; i++) {
-//            System.out.println(i + "-" + parent[i]);
-//        }
     }
 
     @Test
